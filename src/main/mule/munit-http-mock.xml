@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="b036b5f0-1bbb-4347-b4e8-7033e7d22c75" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="bdab5f07-285c-46b1-ae04-d37dc6603eae" />
+	<flow name="munit-http-mockFlow" doc:id="bb3e9f60-1074-4a82-912f-44dad5717f88" >
+		<http:listener doc:name="Listener" doc:id="dbca4bbe-75f6-428e-829f-58597a179e7e" config-ref="HTTP_Listener_config" path="/munit-http-mock"/>
+		<http:request method="GET" doc:name="Request" doc:id="5ec31920-0461-4e42-889c-497a23705881" config-ref="HTTP_Request_configuration" path="/result"/>
+		<ee:transform doc:name="Transform Message" doc:id="e25cf498-1070-4865-b4ed-dba639dea17b" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+[{
+	"key": "vishnu"
+}]]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<foreach doc:name="For Each" doc:id="29bf77e1-7112-473c-a2f4-2411196509af" >
+			<logger level="INFO" doc:name="Logger" doc:id="53852809-e48b-4dd7-8603-1150d086e639" message="#[payload.key]"/>
+		</foreach>
+	</flow>
+</mule>
